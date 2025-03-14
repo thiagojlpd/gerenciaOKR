@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Organograma Dinâmico com Edição de Resultados-Chave</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+  
+    h2 {
+      font-weight: 500;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  
+    #container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+  
+    #chart_div {
+      flex: 3;
+      min-width: 300px;
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  
+    #detailsBox {
+      flex: 1;
+      min-width: 250px;
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: none;
+    }
+  
+    .controls {
+      margin-bottom: 20px;
+    }
+  
+    input[type="text"] {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-right: 6px;
+      width: 220px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+      transition: border 0.3s ease;
+    }
+  
+    input[type="text"]:focus {
+      border-color: #3f51b5;
+      outline: none;
+    }
+  
+    button {
+      background-color: #3f51b5;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+  
+    button:hover {
+      background-color: #2c3ea8;
+    }
+  
+    .nodeTitle {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #333;
+    }
+  
+    ul {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+  
+    .metaItem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px dashed #ccc;
+    }
+  
+    .metaItem button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 3px 6px;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+  
+    .metaItem button:hover {
+      background-color: #c62828;
+    }
+  
+    .controls span {
+      font-weight: 500;
+    }
+  </style>
+  
+</head>
+<body>
+
+  <h2>Organograma Interativo com Resultados-Chave</h2>
+
+  <div class="controls">
+    <strong>Selecionado:</strong> <span id="selectedNode">Nenhum</span><br><br>
+    <input type="text" id="newNodeId" placeholder="ID do novo nó">
+    <button onclick="addNode()">➕ Adicionar Nó</button>
+    <button onclick="removeNode()">🗑️ Remover Nó</button><br>
+    <input type="text" id="editNodeName" placeholder="Novo nome do nó">
+    <button onclick="editNodeName()">✏️ Editar Nome</button>
+  </div>
+
+  <!-- Adicione dentro da <body>, logo abaixo dos botões de adicionar/remover -->
+<div class="controls">
+  <button onclick="exportarJSON()">📤 Exportar JSON</button>
+  <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importarJSON(event)">
+  <button onclick="document.getElementById('jsonFileInput').click()">📥 Importar JSON</button>
+</div>
+
+<div class="controls">
+  <button onclick="exportarImagem()">🖼️ Exportar como PNG</button>
+</div>
+
+
+
+  <div id="container">
+    <div id="chart_div"></div>
+
+    <div id="detailsBox">
+      <div class="nodeTitle" id="detailTitle"></div>
+      <div id="detailContent"></div>
+
+      <hr>
+      <h4>Editar Resultados-chave</h4>
+      <input type="text" id="newMeta" placeholder="Nova meta">
+      <button onclick="addMeta()">➕ Adicionar Meta</button>
+    </div>
+  </div>
+
+  <script>
+    google.charts.load('current', { packages: ["orgchart"] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    let data;
+    let chart;
+    let selectedId = null;
+
+    let nodeTitles = {
+      'Diretor': 'Diretor',
+      'Gerente1': 'Gerente 1',
+      'Gerente2': 'Gerente 2'
+    };
+
+    let dataArray = [
+      [{v: 'Diretor', f: formatNode('Diretor')}, ''],
+      [{v: 'Gerente1', f: formatNode('Gerente1')}, 'Diretor'],
+      [{v: 'Gerente2', f: formatNode('Gerente2')}, 'Diretor']
+    ];
+
+    let resultadosChave = {
+      'Diretor': ['Definir estratégias', 'Analisar desempenho geral', 'Gerenciar orçamento'],
+      'Gerente1': ['Aumentar vendas regionais', 'Treinar equipe comercial'],
+      'Gerente2': ['Melhorar atendimento', 'Implantar novo sistema CRM']
+    };
+
+    function formatNode(id) {
+      const title = nodeTitles[id] || id;
+      return `<div><strong>${title}</strong></div>`;
+    }
+
+    function drawChart() {
+      data = new google.visualization.DataTable();
+      data.addColumn('string', 'ID');
+      data.addColumn('string', 'Pai');
+      data.addRows(dataArray);
+      chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+      chart.draw(data, { allowHtml: true });
+
+      google.visualization.events.addListener(chart, 'select', () => {
+        const selection = chart.getSelection();
+        if (selection.length > 0) {
+          selectedId = data.getValue(selection[0].row, 0);
+          document.getElementById('selectedNode').innerText = selectedId;
+          mostrarResultadosChave(selectedId);
+        }
+      });
+    }
+
+    function addNode() {
+      const newId = document.getElementById('newNodeId').value.trim();
+      if (!newId || !selectedId) {
+        alert("Informe o ID do novo nó e selecione um nó pai.");
+        return;
+      }
+
+      if (dataArray.some(row => row[0].v === newId)) {
+        alert("ID já existe.");
+        return;
+      }
+
+      nodeTitles[newId] = newId;
+      dataArray.push([{v: newId, f: formatNode(newId)}, selectedId]);
+      resultadosChave[newId] = [];
+      drawChart();
+      document.getElementById('newNodeId').value = '';
+    }
+
+    function removeNode() {
+      if (!selectedId || selectedId === 'Diretor') {
+        alert("Selecione um nó (exceto o raiz) para remover.");
+        return;
+      }
+
+      function removeRecursively(id) {
+        const filhos = dataArray.filter(row => row[1] === id);
+        filhos.forEach(f => removeRecursively(f[0].v));
+        dataArray = dataArray.filter(row => row[0].v !== id);
+        delete resultadosChave[id];
+        delete nodeTitles[id];
+      }
+
+      removeRecursively(selectedId);
+      selectedId = null;
+      document.getElementById('selectedNode').innerText = 'Nenhum';
+      document.getElementById('detailsBox').style.display = 'none';
+      drawChart();
+    }
+
+    function editNodeName() {
+      const newName = document.getElementById('editNodeName').value.trim();
+      if (!selectedId || !newName) {
+        alert("Selecione um nó e informe um novo nome.");
+        return;
+      }
+
+      nodeTitles[selectedId] = newName;
+
+      dataArray = dataArray.map(row => {
+        if (row[0].v === selectedId) {
+          return [{v: selectedId, f: formatNode(selectedId)}, row[1]];
+        }
+        return row;
+      });
+
+      drawChart();
+      mostrarResultadosChave(selectedId);
+      document.getElementById('editNodeName').value = '';
+    }
+
+    function mostrarResultadosChave(id) {
+      const resultados = resultadosChave[id] || [];
+      const title = nodeTitles[id] || id;
+      document.getElementById('detailTitle').innerText = `Resultados-chave de ${title}`;
+      let lista = '<ul>';
+
+      resultados.forEach((item, index) => {
+        lista += `<li class="metaItem">
+          ${item}
+          <button onclick="removerMeta(${index})">x</button>
+        </li>`;
+      });
+
+      lista += '</ul>';
+      document.getElementById('detailContent').innerHTML = lista;
+      document.getElementById('detailsBox').style.display = 'block';
+    }
+
+    function addMeta() {
+      const novaMeta = document.getElementById('newMeta').value.trim();
+      if (!selectedId || !novaMeta) return;
+
+      resultadosChave[selectedId].push(novaMeta);
+      mostrarResultadosChave(selectedId);
+      document.getElementById('newMeta').value = '';
+    }
+
+    function removerMeta(index) {
+      if (!selectedId) return;
+      resultadosChave[selectedId].splice(index, 1);
+      mostrarResultadosChave(selectedId);
+    }
+
+     function exportarJSON() {
+    const json = JSON.stringify({ dataArray, resultadosChave }, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "organograma.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  function importarJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const json = JSON.parse(e.target.result);
+        if (!json.dataArray || !json.resultadosChave) {
+          alert("Arquivo inválido.");
+          return;
+        }
+
+        dataArray = json.dataArray;
+        resultadosChave = json.resultadosChave;
+        drawChart();
+
+        selectedId = null;
+        document.getElementById('selectedNode').innerText = 'Nenhum';
+        document.getElementById('detailsBox').style.display = 'none';
+      } catch (err) {
+        alert("Erro ao importar JSON.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+
+function exportarImagem() {
+  const chartElement = document.getElementById("chart_div");
+
+  html2canvas(chartElement).then((canvas) => {
+    const link = document.createElement("a");
+    link.href = canvas.toDataURL("image/png");
+    link.download = "organograma.png";
+    link.click();
+  }).catch((err) => {
+    console.error("Erro ao exportar imagem:", err);
+    alert("Erro ao gerar a imagem.");
+  });
+}
+
+  </script>
+
+</body>
+</html>
