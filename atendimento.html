@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serviços - Filtro e 5W2H</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f2f4f8;
+      color: #333;
+    }
+
+    header {
+      background-color: #1976d2;
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .filter-area {
+      background-color: #fff;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filters input, .filters select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .services-list {
+      display: grid;
+      gap: 1.5rem;
+      padding: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .service-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .service-card:hover {
+      transform: scale(1.02);
+    }
+
+    .service-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #1976d2;
+      margin-bottom: 0.5rem;
+    }
+
+    .w2h-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .w2h-table th, .w2h-table td {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      background: #1976d2;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Serviços de TI</h1>
+  </header>
+
+  <section class="filter-area">
+    <h2>Filtrar Serviços</h2>
+    <div class="filters">
+      <input type="text" id="search" placeholder="Buscar por nome...">
+      <select id="category">
+        <option value="">Todas as Categorias</option>
+        <option value="suporte">Suporte</option>
+        <option value="desenvolvimento">Desenvolvimento</option>
+        <option value="infraestrutura">Infraestrutura</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="services-list" id="services-list">
+    <!-- Lista de serviços será gerada aqui -->
+  </section>
+
+  <footer>
+    <p>&copy; 2025</p>
+  </footer>
+
+  <script>
+    const services = [
+      {
+        nome: "Suporte Técnico",
+        categoria: "suporte",
+        w2h: {
+          oque: "Resolver problemas técnicos",
+          porque: "Garantir operação contínua",
+          onde: "Remoto ou presencial",
+          quando: "Durante horário comercial",
+          quem: "Equipe de Suporte",
+          como: "Via chamado ou atendimento direto",
+          quanto: "Incluído no contrato"
+        }
+      },
+      {
+        nome: "Desenvolvimento de Sistema",
+        categoria: "desenvolvimento",
+        w2h: {
+          oque: "Criar software sob medida",
+          porque: "Atender necessidades específicas",
+          onde: "Ambiente de desenvolvimento interno",
+          quando: "Conforme cronograma do projeto",
+          quem: "Equipe de Desenvolvimento",
+          como: "Metodologia ágil (Scrum)",
+          quanto: "Sob orçamento"
+        }
+      },
+      {
+        nome: "Gerenciamento de Redes",
+        categoria: "infraestrutura",
+        w2h: {
+          oque: "Monitorar e administrar redes",
+          porque: "Manter conectividade e segurança",
+          onde: "Data Center / Escritórios",
+          quando: "24h por dia",
+          quem: "Equipe de Infraestrutura",
+          como: "Ferramentas de monitoramento",
+          quanto: "Sob contrato mensal"
+        }
+      }
+    ];
+
+    function renderServices() {
+      const list = document.getElementById("services-list");
+      const search = document.getElementById("search").value.toLowerCase();
+      const category = document.getElementById("category").value;
+
+      list.innerHTML = "";
+
+      const filtered = services.filter(service => {
+        return (
+          service.nome.toLowerCase().includes(search) &&
+          (category === "" || service.categoria === category)
+        );
+      });
+
+      if (filtered.length === 0) {
+        list.innerHTML = "<p>Nenhum serviço encontrado.</p>";
+        return;
+      }
+
+      filtered.forEach(service => {
+        const card = document.createElement("div");
+        card.className = "service-card";
+
+        card.innerHTML = `
+          <div class="service-title">${service.nome}</div>
+          <table class="w2h-table">
+            <tr><th>O quê</th><td>${service.w2h.oque}</td></tr>
+            <tr><th>Por quê</th><td>${service.w2h.porque}</td></tr>
+            <tr><th>Onde</th><td>${service.w2h.onde}</td></tr>
+            <tr><th>Quando</th><td>${service.w2h.quando}</td></tr>
+            <tr><th>Quem</th><td>${service.w2h.quem}</td></tr>
+            <tr><th>Como</th><td>${service.w2h.como}</td></tr>
+            <tr><th>Quanto vai custar</th><td>${service.w2h.quanto}</td></tr>
+          </table>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    document.getElementById("search").addEventListener("input", renderServices);
+    document.getElementById("category").addEventListener("change", renderServices);
+
+    renderServices();
+  </script>
+</body>
+</html>
