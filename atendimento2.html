@@ -8,130 +8,153 @@
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background: #f2f4f8;
+      background: #f5f7fa;
       color: #333;
+      line-height: 1.6;
     }
-
+  
     header {
-      background-color: #5c91d0;
-      background: linear-gradient(to right, #0f467d, #42a5f5);
+      background: linear-gradient(to right, #1565c0, #42a5f5);
       color: white;
-      padding: 0.2rem 1rem; /* ALTURA REDUZIDA AQUI */
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.6rem;
-      font-weight: 200;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      height: 38px; /* ALTURA FIXA OPCIONAL ADICIONADA */
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
     }
-
-    .header-title {
+  
+    header h1 {
       margin: 0;
-      font-size: 0.3rem;
-      font-weight: 200;
+      font-size: 2rem;
+      letter-spacing: 1px;
     }
-
+  
     .filter-area {
       background-color: #fff;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 2rem;
+      margin-top: -30px;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+      border-radius: 15px;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
     }
-
+  
     .filters {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
     }
-
-    .filters input, .filters select {
-      padding: 0.5rem;
+  
+    .filters input,
+    .filters select {
+      padding: 0.7rem 1rem;
       font-size: 1rem;
       flex: 1;
-      min-width: 200px;
+      min-width: 220px;
       border: 1px solid #ccc;
-      border-radius: 8px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
-
+  
+    .filters input:focus,
+    .filters select:focus {
+      border-color: #1976d2;
+      box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.2);
+      outline: none;
+    }
+  
     .services-list {
-      display: grid;
-      gap: 1.5rem;
-      padding: 2rem;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
+  display: grid;
+  gap: 2rem;
+  padding: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+@media screen and (min-width: 1200px) {
+  .services-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+  
+  
+
 
     .service-card {
       background: white;
       padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      border-left: 5px solid #6ca3d3;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
       position: relative;
     }
-
+    
     .service-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
     }
-
+  
     .service-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #3a6c9e;
-      margin-bottom: 0.6rem;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #1565c0;
+      margin-bottom: 1rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-
-    .badge {
-      display: inline-block;
-      background: #e6f1fa;
-      color: #3a6c9e;
-      padding: 0.3rem 0.6rem;
-      border-radius: 50px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      margin-bottom: 0.8rem;
+  
+    .service-title::before {
+      content: "🔹";
+      font-size: 1.2rem;
     }
-
+  
     .w2h-table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+      border-collapse: collapse;
       margin-top: 1rem;
       border-radius: 10px;
       overflow: hidden;
     }
-
+  
     .w2h-table th {
-      background-color: #6ca3d3;
+      background-color: #1976d2;
       color: white;
-      padding: 0.6rem;
-      font-weight: 600;
+      font-weight: bold;
     }
-
+  
+    .w2h-table th,
     .w2h-table td {
-      padding: 0.6rem;
-      background-color: #f9f9f9;
-      border-bottom: 1px solid #ddd;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-size: 0.95rem;
     }
-
+  
+    .w2h-table tr:nth-child(even) {
+      background-color: #f4f6f9;
+    }
+  
     footer {
-      background: #6ca3d3;
-      background: linear-gradient(to right, #1976d2, #42a5f5);
+      background: #1565c0;
       color: white;
-      padding: 0.5rem;
+      padding: 1rem;
       text-align: center;
-      font-size: 0.9rem;
+      margin-top: 3rem;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
     }
   </style>
+  
 </head>
 <body>
 
   <header>
-    <h1>Serviços detalhados do SFPC/2</h1>
+    <h1>SERVIÇOS DETALHADOS DO SFPC/2</h1>
   </header>
 
   <section class="filter-area">

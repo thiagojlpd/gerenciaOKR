@@ -9,6 +9,37 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 
   <style>
+    header {
+      background-color: #5c91d0;
+      background: linear-gradient(to right, #363636, #acacac);
+      color: white;
+      padding: 0.2rem 1rem;
+      /* ALTURA REDUZIDA AQUI */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      font-weight: 200;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      height: 38px;
+      /* ALTURA FIXA OPCIONAL ADICIONADA */
+    }
+
+    .header-title {
+      margin: 0;
+      font-size: 0.3rem;
+      font-weight: 200;
+    }
+
+    footer {
+      background: #6ca3d3;
+      background: linear-gradient(to right, #610303, #960606);
+      color: white;
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
     @media (max-width: 900px) {
       #container {
         flex-direction: column;
@@ -78,6 +109,11 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
+    #chart_div:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
     #detailsBox {
       flex: 1;
       min-width: 250px;
@@ -87,6 +123,11 @@
       padding: 20px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       display: none;
+    }
+
+    #detailsBox:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     .controls {
@@ -111,7 +152,7 @@
     }
 
     button {
-      background: linear-gradient(135deg, #b4b0fc, #7ccbf0);
+      background: linear-gradient(135deg, #ffd24c, #b59840);
       border: none;
       color: #fff;
       padding: 10px 16px;
@@ -122,7 +163,8 @@
     }
 
     button:hover {
-      background-color: #2c3ea8;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     .nodeTitle {
@@ -377,8 +419,10 @@
 </head>
 
 <body>
+  <header>
+    <h1>Organograma de objetivos e resultados-chave</h1>
+  </header>
   <div id="container-principal">
-    <h2>Objetivos e Resultados-Chave</h2>
 
     <div ID="controls" class="controls">
       <strong>Selecionado:</strong> <span id="selectedNode">Nenhum</span><br><br>
