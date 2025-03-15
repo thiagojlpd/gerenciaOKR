@@ -21,11 +21,34 @@
       }
     }
 
+    #container-principal {
+      background: linear-gradient(135deg, #eff0f3, #dce1e9);
+      background: radial-gradient(circle, #eff0f3, #dce1e9);
+      padding: 15px;
+      margin: auto;
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 1px solid #e0e0e0;
+    }
+
+    #container-principal:hover {
+      box-shadow: 0 6px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    #container-principal h2 {
+      text-align: center;
+      font-size: 28px;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f7f9fc;
       margin: 0;
-      padding: 20px;
+      padding: 10px;
       color: #333;
       overflow-x: hidden;
       /* Impede barra de rolagem horizontal */
@@ -49,20 +72,20 @@
       flex: 3;
       min-width: 300px;
       max-width: 98%;
-      background-color: #fff;
+      background-color: #ffffff;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     #detailsBox {
       flex: 1;
       min-width: 250px;
       max-width: 98%;
-      background-color: #fff;
+      background-color: #ffffff;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       display: none;
     }
 
@@ -83,20 +106,19 @@
     }
 
     input[type="text"]:focus {
-      border-color: #8999f0;
+      border-color: #b5c7f9;
       outline: none;
     }
 
     button {
-      background-color: #8999f0;
-      color: #fff;
+      background: linear-gradient(135deg, #b4b0fc, #7ccbf0);
       border: none;
-      padding: 8px 14px;
+      color: #fff;
+      padding: 10px 16px;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: 500;
-      font-size: 14px;
       transition: background 0.3s ease;
+      font-weight: bold;
     }
 
     button:hover {
@@ -124,7 +146,7 @@
     }
 
     .metaItem button {
-      background-color: #f44336;
+      background-color: #e8928c;
       color: white;
       border: none;
       padding: 3px 6px;
@@ -140,6 +162,7 @@
       font-weight: 500;
     }
   </style>
+
 
   <script>
     google.charts.load('current', { packages: ["orgchart"] });
@@ -162,9 +185,9 @@
     ];
 
     let resultadosChave = {
-      'TI': ['Definir estratégias', 'Analisar desempenho geral'],
-      'PROJETOS': ['Melhorias'],
-      'SUPORTE': ['Continuidade e Consultoria']
+      'TI': [{ texto: 'Definir estratégias', concluido: false }, { texto: 'Analisar desempenho geral', concluido: true }],
+      'PROJETOS': [{ texto: 'Melhorias', concluido: false }],
+      'SUPORTE': [{ texto: 'Continuidade e Consultoria', concluido: false }]
     };
 
     function formatNode(id) {
@@ -258,10 +281,15 @@
       let lista = '<ul>';
 
       resultados.forEach((item, index) => {
+        const checkStatus = item.concluido ? 'checked' : '';
+        const itemClass = item.concluido ? 'style="text-decoration: line-through; color: green;"' : '';
         lista += `<li class="metaItem">
-          ${item}
-          <button onclick="removerMeta(${index})">x</button>
-        </li>`;
+        <label>
+          <input type="checkbox" onchange="alternarConclusao(${index})" ${checkStatus}>
+          <span ${itemClass}>${item.texto}</span>
+        </label>
+        <button onclick="removerMeta(${index})">x</button>
+      </li>`;
       });
 
       lista += '</ul>';
@@ -273,7 +301,7 @@
       const novaMeta = document.getElementById('newMeta').value.trim();
       if (!selectedId || !novaMeta) return;
 
-      resultadosChave[selectedId].push(novaMeta);
+      resultadosChave[selectedId].push({ texto: novaMeta, concluido: false });
       mostrarResultadosChave(selectedId);
       document.getElementById('newMeta').value = '';
     }
@@ -281,6 +309,12 @@
     function removerMeta(index) {
       if (!selectedId) return;
       resultadosChave[selectedId].splice(index, 1);
+      mostrarResultadosChave(selectedId);
+    }
+
+    function alternarConclusao(index) {
+      if (!selectedId) return;
+      resultadosChave[selectedId][index].concluido = !resultadosChave[selectedId][index].concluido;
       mostrarResultadosChave(selectedId);
     }
 
@@ -324,7 +358,6 @@
       reader.readAsText(file);
     }
 
-
     function exportarImagem() {
       const chartElement = document.getElementById("chart_div");
 
@@ -338,40 +371,41 @@
         alert("Erro ao gerar a imagem.");
       });
     }
-
   </script>
+
 
 </head>
 
 <body>
+  <div id="container-principal">
+    <h2>Objetivos e Resultados-Chave</h2>
 
-  <h2>Organograma Interativo com Resultados-Chave</h2>
-
-  <div ID="controls" class="controls">
-    <strong>Selecionado:</strong> <span id="selectedNode">Nenhum</span><br><br>
-    <input type="text" id="newNodeId" placeholder="Novo">
-    <button onclick="addNode()">➕</button>
-    <button onclick="removeNode()">🗑️</button>
-    <input type="text" id="editNodeName" placeholder="Edita">
-    <button onclick="editNodeName()">✏️</button>
-    <button onclick="exportarJSON()">📤 JSON</button>
-    <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importarJSON(event)">
-    <button onclick="document.getElementById('jsonFileInput').click()">📥 JSON</button>
-    <button onclick="exportarImagem()">🖼️ PNG</button>
-  </div>
+    <div ID="controls" class="controls">
+      <strong>Selecionado:</strong> <span id="selectedNode">Nenhum</span><br><br>
+      <input type="text" id="newNodeId" placeholder="Novo">
+      <button onclick="addNode()">➕</button>
+      <button onclick="removeNode()">🗑️</button>
+      <input type="text" id="editNodeName" placeholder="Edita">
+      <button onclick="editNodeName()">✏️</button>
+      <button onclick="exportarJSON()">📤 JSON</button>
+      <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importarJSON(event)">
+      <button onclick="document.getElementById('jsonFileInput').click()">📥 JSON</button>
+      <button onclick="exportarImagem()">🖼️ PNG</button>
+    </div>
 
 
-  <div id="container">
-    <div id="chart_div"></div>
+    <div id="container">
+      <div id="chart_div"></div>
 
-    <div id="detailsBox">
-      <div class="nodeTitle" id="detailTitle"></div>
-      <div id="detailContent"></div>
+      <div id="detailsBox">
+        <div class="nodeTitle" id="detailTitle"></div>
+        <div id="detailContent"></div>
 
-      <hr>
-      <h4>Editar Resultados-chave</h4>
-      <input type="text" id="newMeta" placeholder="Nova meta">
-      <button onclick="addMeta()">➕</button>
+        <hr>
+        <h4>Editar Resultados-chave</h4>
+        <input type="text" id="newMeta" placeholder="Nova meta">
+        <button onclick="addMeta()">➕</button>
+      </div>
     </div>
   </div>
 
