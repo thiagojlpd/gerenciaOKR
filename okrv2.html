@@ -15,7 +15,7 @@
       margin: 0;
       padding: 0;
     }
-  
+
     body {
       font-family: 'Segoe UI', Roboto, sans-serif;
       background-color: #f4f6f9;
@@ -24,7 +24,7 @@
       padding: 15px;
       overflow-x: hidden;
     }
-  
+
     header {
       background: linear-gradient(to right, #1e1e1e, #848484);
       color: #fff;
@@ -38,12 +38,12 @@
       border-radius: 8px;
       margin-bottom: 8px;
     }
-  
+
     .header-title {
       font-size: 1.1rem;
       font-weight: 600;
     }
-  
+
     footer {
       background: linear-gradient(to right, #7b1c1c, #d32f2f);
       color: white;
@@ -53,28 +53,29 @@
       border-radius: 8px;
       margin-top: 30px;
     }
-  
+
     #container-principal {
-      background: linear-gradient(145deg, #ffffff, #e9edf3);
+      background: linear-gradient(145deg, #efeded, #e9edf3);
       padding: 15px;
       width: 100%;
+      height: 100%;
       border-radius: 16px;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
       border: 1px solid #e0e0e0;
       transition: box-shadow 0.3s ease;
     }
-  
+
     #container-principal:hover {
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
     }
-  
+
     #container-principal h2 {
       text-align: center;
       font-size: 2rem;
       color: #2c3e50;
       margin-bottom: 30px;
     }
-  
+
     #container {
       display: flex;
       flex-wrap: wrap;
@@ -82,21 +83,23 @@
       justify-content: space-between;
       width: 100%;
     }
-  
-    #chart_div {
-  flex: 3;
-  min-width: 300px;
-  max-width: 98%;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-  /* Alinhamento centralizado do conteúdo */
-  display: flex;
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: center;     /* Centraliza verticalmente */
-}
+    #chart_div {
+      flex: 3;
+      min-width: 300px;
+      max-width: 98%;
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      /* Alinhamento centralizado do conteúdo */
+      display: flex;
+      justify-content: center;
+      /* Centraliza horizontalmente */
+      align-items: center;
+      /* Centraliza verticalmente */
+    }
 
 
     #detailsBox {
@@ -109,11 +112,11 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       display: none;
     }
-  
+
     .controls {
       margin-bottom: 20px;
     }
-  
+
     input[type="text"] {
       padding: 10px 14px;
       border: 1px solid #ccc;
@@ -123,16 +126,16 @@
       margin-right: 10px;
       transition: all 0.3s ease;
     }
-  
+
     input[type="text"]:focus {
       border-color: #3f51b5;
       outline: none;
       box-shadow: 0 0 4px rgba(63, 81, 181, 0.4);
     }
-  
+
     button {
       background: linear-gradient(135deg, #3f51b5, #6573c3);
-      background: linear-gradient(135deg, #ffdb87, #c1ad7f);
+      background: linear-gradient(135deg, #e9e7e7, #d0cece);
       border: none;
       color: #fff;
       padding: 10px 18px;
@@ -142,32 +145,33 @@
       font-size: 14px;
       transition: background 0.3s, transform 0.2s;
     }
-  
+
     button:hover {
       background: linear-gradient(135deg, #5c6bc0, #7986cb);
+      background: linear-gradient(135deg, #ffdb87, #c1ad7f);
       transform: translateY(-2px);
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
     }
-  
+
     .nodeTitle {
       font-weight: bold;
       font-size: 20px;
       margin-bottom: 14px;
       color: #2c3e50;
     }
-  
+
     ul {
       padding-left: 25px;
       margin-top: 10px;
     }
-  
+
     .metaItem {
       display: flex;
       justify-content: space-between;
       padding: 6px 0;
       border-bottom: 1px dashed #ccc;
     }
-  
+
     .metaItem button {
       background-color: #e57373;
       padding: 5px 10px;
@@ -175,239 +179,289 @@
       border-radius: 6px;
       font-weight: 500;
     }
-  
+
     .metaItem button:hover {
       background-color: #c62828;
     }
-  
+
     .controls span {
       font-weight: 600;
     }
-  
+
     @media (max-width: 900px) {
       #container {
         flex-direction: column;
       }
-  
+
       #chart_div,
       #detailsBox {
         width: 100%;
         flex: 1 1 100%;
       }
     }
-  </style>
-  
 
-
-
-  <script>
-    google.charts.load('current', { packages: ["orgchart"] });
-    google.charts.setOnLoadCallback(drawChart);
-
-    let data;
-    let chart;
-    let selectedId = null;
-
-    let nodeTitles = {
-      'TI': 'TI',
-      'PROJETOS': 'PROJETOS',
-      'SUPORTE': 'SUPORTE'
-    };
-
-    let dataArray = [
-      [{ v: 'TI', f: formatNode('TI') }, ''],
-      [{ v: 'PROJETOS', f: formatNode('PROJETOS') }, 'TI'],
-      [{ v: 'SUPORTE', f: formatNode('SUPORTE') }, 'TI']
-    ];
-
-    let resultadosChave = {
-      'TI': [{ texto: 'Definir estratégias', concluido: false }, { texto: 'Analisar desempenho geral', concluido: true }],
-      'PROJETOS': [{ texto: 'Melhorias', concluido: false }],
-      'SUPORTE': [{ texto: 'Continuidade e Consultoria', concluido: false }]
-    };
-
-    function formatNode(id) {
-      const title = nodeTitles[id] || id;
-      return `<div><strong>${title}</strong></div>`;
+    .closeButton {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      background-color: transparent;
+      border: none;
+      font-size: 14px;
+      /* menor que antes */
+      padding: 2px 4px;
+      line-height: 1;
+      cursor: pointer;
+      color: #666;
     }
 
-    function drawChart() {
-      data = new google.visualization.DataTable();
-      data.addColumn('string', 'ID');
-      data.addColumn('string', 'Pai');
-      data.addRows(dataArray);
-      chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
-      chart.draw(data, { allowHtml: true });
+    .closeButton:hover {
+      color: rgb(19, 3, 3);
+    }
 
-      google.visualization.events.addListener(chart, 'select', () => {
-        const selection = chart.getSelection();
-        if (selection.length > 0) {
-          selectedId = data.getValue(selection[0].row, 0);
+    .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 10;
+    opacity: 1;
+  }
+  
+  </style>
+
+
+
+
+<script>
+  google.charts.load('current', { packages: ["orgchart"] });
+  google.charts.setOnLoadCallback(drawChart);
+
+  let data;
+  let chart;
+  let selectedId = null;
+
+  let nodeTitles = {
+    'TI': 'TI',
+    'PROJETOS': 'PROJETOS',
+    'SUPORTE': 'SUPORTE'
+  };
+
+  let dataArray = [
+    [{ v: 'TI', f: formatNode('TI') }, ''],
+    [{ v: 'PROJETOS', f: formatNode('PROJETOS') }, 'TI'],
+    [{ v: 'SUPORTE', f: formatNode('SUPORTE') }, 'TI']
+  ];
+
+  let resultadosChave = {
+    'TI': [{ texto: 'Definir estratégias', concluido: false }, { texto: 'Analisar desempenho geral', concluido: true }],
+    'PROJETOS': [{ texto: 'Melhorias', concluido: false }],
+    'SUPORTE': [{ texto: 'Continuidade e Consultoria', concluido: false }]
+  };
+
+  function formatNode(id) {
+    const title = nodeTitles[id] || id;
+    return `<div style="max-width:120px; word-wrap:break-word; white-space:normal; font-size:16px; font-weight:bold;">
+              ${title}
+            </div>`;
+  }
+
+  function drawChart() {
+    data = new google.visualization.DataTable();
+    data.addColumn('string', 'ID');
+    data.addColumn('string', 'Pai');
+    data.addRows(dataArray);
+    chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+    chart.draw(data, { allowHtml: true });
+
+    // Clique esquerdo: seleção
+    google.visualization.events.addListener(chart, 'select', () => {
+      const selection = chart.getSelection();
+      if (selection.length > 0) {
+        selectedId = data.getValue(selection[0].row, 0);
+        document.getElementById('selectedNode').innerText = selectedId;
+      }
+    });
+
+    // Clique direito: mostrar resultados-chave
+    document.getElementById('chart_div').addEventListener('contextmenu', function (event) {
+      event.preventDefault();
+      const chartElement = event.target.closest('td.google-visualization-orgchart-node');
+      if (chartElement) {
+        const nodeText = chartElement.innerText.trim();
+        const found = dataArray.find(row => (nodeTitles[row[0].v] || row[0].v) === nodeText);
+        if (found) {
+          selectedId = found[0].v;
           document.getElementById('selectedNode').innerText = selectedId;
           mostrarResultadosChave(selectedId);
         }
-      });
+      }
+    });
+  }
+
+  function addNode() {
+    const newId = document.getElementById('newNodeId').value.trim();
+    if (!newId || !selectedId) {
+      alert("Informe o nome do novo nó e selecione um nó pai.");
+      return;
+    }
+    if (dataArray.some(row => row[0].v === newId)) {
+      alert("Nome já existe.");
+      return;
     }
 
-    function addNode() {
-      const newId = document.getElementById('newNodeId').value.trim();
-      if (!newId || !selectedId) {
-        alert("Informe o nome do novo nó e selecione um nó pai.");
-        return;
-      }
+    nodeTitles[newId] = newId;
+    dataArray.push([{ v: newId, f: formatNode(newId) }, selectedId]);
+    resultadosChave[newId] = [];
+    drawChart();
+    document.getElementById('newNodeId').value = '';
+  }
 
-      if (dataArray.some(row => row[0].v === newId)) {
-        alert("Nome já existe.");
-        return;
-      }
-
-      nodeTitles[newId] = newId;
-      dataArray.push([{ v: newId, f: formatNode(newId) }, selectedId]);
-      resultadosChave[newId] = [];
-      drawChart();
-      document.getElementById('newNodeId').value = '';
+  function removeNode() {
+    if (!selectedId || selectedId === 'TI') {
+      alert("Selecione um nó (exceto o raiz) para remover.");
+      return;
     }
 
-    function removeNode() {
-      if (!selectedId || selectedId === 'TI') {
-        alert("Selecione um nó (exceto o raiz) para remover.");
-        return;
-      }
-
-      function removeRecursively(id) {
-        const filhos = dataArray.filter(row => row[1] === id);
-        filhos.forEach(f => removeRecursively(f[0].v));
-        dataArray = dataArray.filter(row => row[0].v !== id);
-        delete resultadosChave[id];
-        delete nodeTitles[id];
-      }
-
-      removeRecursively(selectedId);
-      selectedId = null;
-      document.getElementById('selectedNode').innerText = 'Nenhum';
-      document.getElementById('detailsBox').style.display = 'none';
-      drawChart();
+    function removeRecursively(id) {
+      const filhos = dataArray.filter(row => row[1] === id);
+      filhos.forEach(f => removeRecursively(f[0].v));
+      dataArray = dataArray.filter(row => row[0].v !== id);
+      delete resultadosChave[id];
+      delete nodeTitles[id];
     }
 
-    function editNodeName() {
-      const newName = document.getElementById('editNodeName').value.trim();
-      if (!selectedId || !newName) {
-        alert("Selecione um nó e informe um novo nome.");
-        return;
+    removeRecursively(selectedId);
+    selectedId = null;
+    document.getElementById('selectedNode').innerText = 'Nenhum';
+    document.getElementById('detailsBox').style.display = 'none';
+    drawChart();
+  }
+
+  function editNodeName() {
+    const newName = document.getElementById('editNodeName').value.trim();
+    if (!selectedId || !newName) {
+      alert("Selecione um nó e informe um novo nome.");
+      return;
+    }
+
+    nodeTitles[selectedId] = newName;
+    dataArray = dataArray.map(row => {
+      if (row[0].v === selectedId) {
+        return [{ v: selectedId, f: formatNode(selectedId) }, row[1]];
       }
+      return row;
+    });
 
-      nodeTitles[selectedId] = newName;
+    drawChart();
+    mostrarResultadosChave(selectedId);
+    document.getElementById('editNodeName').value = '';
+  }
 
-      dataArray = dataArray.map(row => {
-        if (row[0].v === selectedId) {
-          return [{ v: selectedId, f: formatNode(selectedId) }, row[1]];
+  function mostrarResultadosChave(id) {
+    const resultados = resultadosChave[id] || [];
+    const title = nodeTitles[id] || id;
+    document.getElementById('detailTitle').innerText = `Resultados-chave de ${title}`;
+    let lista = '<ul>';
+    resultados.forEach((item, index) => {
+      const checkStatus = item.concluido ? 'checked' : '';
+      const itemClass = item.concluido ? 'style="text-decoration: line-through; color: green;"' : '';
+      lista += `<li class="metaItem">
+                  <label>
+                    <input type="checkbox" onchange="alternarConclusao(${index})" ${checkStatus}>
+                    <span ${itemClass}>${item.texto}</span>
+                  </label>
+                  <button onclick="removerMeta(${index})">x</button>
+                </li>`;
+    });
+    lista += '</ul>';
+    document.getElementById('detailContent').innerHTML = lista;
+    document.getElementById('detailsBox').style.display = 'block';
+  }
+
+  function addMeta() {
+    const novaMeta = document.getElementById('newMeta').value.trim();
+    if (!selectedId || !novaMeta) return;
+    resultadosChave[selectedId].push({ texto: novaMeta, concluido: false });
+    mostrarResultadosChave(selectedId);
+    document.getElementById('newMeta').value = '';
+  }
+
+  function removerMeta(index) {
+    if (!selectedId) return;
+    resultadosChave[selectedId].splice(index, 1);
+    mostrarResultadosChave(selectedId);
+  }
+
+  function alternarConclusao(index) {
+    if (!selectedId) return;
+    resultadosChave[selectedId][index].concluido = !resultadosChave[selectedId][index].concluido;
+    mostrarResultadosChave(selectedId);
+  }
+
+  function exportarJSON() {
+    const json = JSON.stringify({ dataArray, resultadosChave }, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "organograma.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importarJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const json = JSON.parse(e.target.result);
+        if (!json.dataArray || !json.resultadosChave) {
+          alert("Arquivo inválido.");
+          return;
         }
-        return row;
-      });
+        dataArray = json.dataArray;
+        resultadosChave = json.resultadosChave;
+        drawChart();
+        selectedId = null;
+        document.getElementById('selectedNode').innerText = 'Nenhum';
+        document.getElementById('detailsBox').style.display = 'none';
+      } catch (err) {
+        alert("Erro ao importar JSON.");
+      }
+    };
+    reader.readAsText(file);
+  }
 
-      drawChart();
-      mostrarResultadosChave(selectedId);
-      document.getElementById('editNodeName').value = '';
-    }
+  function exportarImagem() {
+    const chartElement = document.getElementById("chart_div");
+    html2canvas(chartElement).then((canvas) => {
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "organograma.png";
+      link.click();
+    }).catch((err) => {
+      console.error("Erro ao exportar imagem:", err);
+      alert("Erro ao gerar a imagem.");
+    });
+  }
 
-    function mostrarResultadosChave(id) {
-      const resultados = resultadosChave[id] || [];
-      const title = nodeTitles[id] || id;
-      document.getElementById('detailTitle').innerText = `Resultados-chave de ${title}`;
-      let lista = '<ul>';
-
-      resultados.forEach((item, index) => {
-        const checkStatus = item.concluido ? 'checked' : '';
-        const itemClass = item.concluido ? 'style="text-decoration: line-through; color: green;"' : '';
-        lista += `<li class="metaItem">
-        <label>
-          <input type="checkbox" onchange="alternarConclusao(${index})" ${checkStatus}>
-          <span ${itemClass}>${item.texto}</span>
-        </label>
-        <button onclick="removerMeta(${index})">x</button>
-      </li>`;
-      });
-
-      lista += '</ul>';
-      document.getElementById('detailContent').innerHTML = lista;
-      document.getElementById('detailsBox').style.display = 'block';
-    }
-
-    function addMeta() {
-      const novaMeta = document.getElementById('newMeta').value.trim();
-      if (!selectedId || !novaMeta) return;
-
-      resultadosChave[selectedId].push({ texto: novaMeta, concluido: false });
-      mostrarResultadosChave(selectedId);
-      document.getElementById('newMeta').value = '';
-    }
-
-    function removerMeta(index) {
-      if (!selectedId) return;
-      resultadosChave[selectedId].splice(index, 1);
-      mostrarResultadosChave(selectedId);
-    }
-
-    function alternarConclusao(index) {
-      if (!selectedId) return;
-      resultadosChave[selectedId][index].concluido = !resultadosChave[selectedId][index].concluido;
-      mostrarResultadosChave(selectedId);
-    }
-
-    function exportarJSON() {
-      const json = JSON.stringify({ dataArray, resultadosChave }, null, 2);
-      const blob = new Blob([json], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "organograma.json";
-      a.click();
-
-      URL.revokeObjectURL(url);
-    }
-
-    function importarJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        try {
-          const json = JSON.parse(e.target.result);
-          if (!json.dataArray || !json.resultadosChave) {
-            alert("Arquivo inválido.");
-            return;
-          }
-
-          dataArray = json.dataArray;
-          resultadosChave = json.resultadosChave;
-          drawChart();
-
-          selectedId = null;
-          document.getElementById('selectedNode').innerText = 'Nenhum';
-          document.getElementById('detailsBox').style.display = 'none';
-        } catch (err) {
-          alert("Erro ao importar JSON.");
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function exportarImagem() {
-      const chartElement = document.getElementById("chart_div");
-
-      html2canvas(chartElement).then((canvas) => {
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = "organograma.png";
-        link.click();
-      }).catch((err) => {
-        console.error("Erro ao exportar imagem:", err);
-        alert("Erro ao gerar a imagem.");
-      });
-    }
-  </script>
+  function fecharDetalhes() {
+    document.getElementById('detailsBox').style.display = 'none';
+  }
+</script>
 
 
 </head>
@@ -418,24 +472,28 @@
   </header>
   <div id="container-principal">
 
-    <div ID="controls" class="controls">
+    <div id="controls" class="controls">
       <strong>Selecionado:</strong> <span id="selectedNode">Nenhum</span><br><br>
-      <input type="text" id="newNodeId" placeholder="Novo">
-      <button onclick="addNode()">➕</button>
-      <button onclick="removeNode()">🗑️</button>
-      <input type="text" id="editNodeName" placeholder="Edita">
-      <button onclick="editNodeName()">✏️</button>
-      <button onclick="exportarJSON()">📤 JSON</button>
+    
+      <input type="text" id="newNodeId" placeholder="Novo" class="tooltip" data-tooltip="Digite o nome do novo nó">
+      <button onclick="addNode()" class="tooltip" data-tooltip="Adicionar novo nó">➕</button>
+      <button onclick="removeNode()" class="tooltip" data-tooltip="Remover nó selecionado">🗑️</button>
+      <input type="text" id="editNodeName" placeholder="Edita" class="tooltip" data-tooltip="Novo nome para o nó">
+      <button onclick="editNodeName()" class="tooltip" data-tooltip="Editar nome do nó">✏️</button>
+      <button onclick="exportarJSON()" class="tooltip" data-tooltip="Exportar como JSON">📤 JSON</button>
       <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importarJSON(event)">
-      <button onclick="document.getElementById('jsonFileInput').click()">📥 JSON</button>
-      <button onclick="exportarImagem()">🖼️ PNG</button>
+      <button onclick="document.getElementById('jsonFileInput').click()" class="tooltip" data-tooltip="Importar JSON">📥 JSON</button>
+      <button onclick="exportarImagem()" class="tooltip" data-tooltip="Exportar como imagem PNG">🖼️ PNG</button>
     </div>
+    
 
 
     <div id="container">
       <div id="chart_div"></div>
 
-      <div id="detailsBox">
+      <div id="detailsBox" style="position: relative;">
+        <button class="closeButton" onclick="fecharDetalhes()">✖</button>
+
         <div class="nodeTitle" id="detailTitle"></div>
         <div id="detailContent"></div>
 
@@ -444,8 +502,8 @@
         <input type="text" id="newMeta" placeholder="Nova meta">
         <button onclick="addMeta()">➕</button>
       </div>
+
     </div>
-  </div>
 
 
 
